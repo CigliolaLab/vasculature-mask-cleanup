@@ -23,8 +23,8 @@ class MaskDataset():
         self.resolution_table = pd.read_excel(os.path.join(root_dir, 'resolution.xlsx'), sheet_name='Sheet1') # Resolution in um
         self.resolution_table['group'] = self.resolution_table['Image'].apply(lambda x: x.split('_')[0])
         self.resolution_table['voxel_size'] = self.resolution_table.apply(lambda x: x['resz'] * x['resy'] * x['resx'], axis=1)
-        self.resolution_table['voxel_cutoff_obj_size'] = self.resolution_table['voxel_size'].apply(lambda x: x * filter_obj_size)
-        self.resolution_table['voxel_cutoff_hole_size'] = self.resolution_table['voxel_size'].apply(lambda x: x * filter_hole_size)
+        self.resolution_table['voxel_cutoff_obj_size'] = (filter_obj_size / self.resolution_table['voxel_size']).apply(np.ceil).astype(int)
+        self.resolution_table['voxel_cutoff_hole_size'] = (filter_hole_size / self.resolution_table['voxel_size']).apply(np.ceil).astype(int)
 
         self.resolution_table.index = self.resolution_table['Image'].apply(lambda x: x.split('.')[0])
         self.imgs = self.resolution_table.index.tolist()
